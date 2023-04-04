@@ -1,0 +1,64 @@
+---
+title: 'Progressive Web Apps are Awesome'
+excerpt: 'Revolutionize Your Web App Experience with Progressive Web Apps - Fast, Offline-Enabled, Installable, and More!'
+coverImage: '/assets/blog/preview/cover.jpg'
+date: '2017-01-24T05:35:07.322Z'
+author:
+  name: Alexandre Ferreira
+  picture: '/assets/blog/authors/alexandre-ferreira.jpg'
+ogImage:
+  url: '/assets/blog/preview/cover.jpg'
+---
+
+# Progressive Web Apps are Awesome
+
+
+## Do you already know the concept or are you wondering what a Progressive Web App (PWA for short) is?
+
+PWAs are not hybrid apps, nor are they native apps. You don't need to learn Swift or Java or use libraries like React Native or Ionic. PWAs are simply web apps that run in the browser, made with the good old JS + HTML5 + CSS3 trio that have been used to build our web pages for several years.
+
+Now you may be wondering, "What's the difference between our current web apps and PWAs?" And I'll answer you: "None." Or, well, almost none, because PWAs are also web apps like the ones we're used to building, but with some concepts that bring them closer to a native app:
+
+- Instant loading
+- Offline mode or low connection mode
+- Can be installed on the phone
+- Supports full-screen mode
+- Can send notifications to users even when the application is not open
+
+To achieve this, we will use new technologies that are already available on some browsers. And all this without blocking the use of the application on browsers that do not yet have full PWA support. That's where the word progressive comes from. These are web apps that provide user experiences progressively due to their technical environment. These new technologies are App Shell, Service Workers, and Manifest.Json.
+
+## Security
+
+Some APIs used in PWAs only work with the https protocol. So if your site isn't already served over https, now is the time to migrate. In addition to providing support for PWAs, the https protocol secures the exchange of sensitive information between your server and your site and is increasingly appreciated by search engines.
+
+## App Shell
+
+The App Shell is composed of all the assets necessary for the structure of your application, such as HTML templates, style sheets, fonts, scripts, etc. The only exception is content. The App Shell corresponds to the bundle of a native app that has been submitted to an app store. The App Shell must be stored in the browser cache to allow for faster loading when reopened and offline support.
+
+## Service Workers
+
+Used with other APIs, such as localStorage, cache, indexDB, etc., Service Workers allow us to put the concept of offline first into practice. This means that the App Shell of the application as well as some content will be cached so that the user can consult the application even when there is no connection.
+
+Service Workers also play a role in push and notifications as they can run in the background while the user is not using the application. Push allows the server to send information to the Service Worker while notifications are responsible for communication between the page and the Service Workers with the user.
+
+## Manifest.json
+
+The Web Manifest is a json file that allows us to control how our PWA will be displayed on the phone. The Web Manifest must contain at least one name and a unique icon of the application so that it can be added to the phone as an application. But it can also contain other information such as a background color to be displayed while the application is loading. A splash screen that will also be displayed during the loading of the application. A theme color to allow the navigation bar to display the color of your PWA. The ability to display or not display the navigation bar when your application is launched from the phone. And also the orientation of the application, useful for applications that need to function in a specific orientation.
+
+## Advantages of PWAs compared to Native Applications
+
+PWAs are Web Apps, which means they can handle URLs. This allows users to easily share information or a page, which is not easily achievable in a Native App. You can easily copy a URL and share it via email, chat, SMS, social networks, etc.
+
+Having a URL also means that the PWA content is indexable by search engines, which is of great interest for traffic acquisition.
+
+While users have to go to an App Store to install a Native App, PWAs can be installed from the browser. Browsers will even prompt users who are used to visiting certain PWAs to install them. This can generate a higher installation rate for PWAs compared to Native Apps, as they create a passive action for users.
+
+## Advantages over Web Apps
+
+I imagine that if you've made it this far, the advantages of PWAs over today's Web Apps are already clear to you. In addition to offering a more complete and smoother experience, we are able to offer experiences that were only possible on Native Apps. Studies conducted on PWAs of the Washington Post and the Chinese e-commerce site Alibaba have shown higher conversion rates and longer average visit times compared to classic Web Apps. This is not surprising, since we already know that users tend to leave a site when its loading time is too slow.
+
+## PWA today or tomorrow?
+
+You may be wondering if the implementation of PWAs is already widespread enough today to deploy them in production. The good news is that things are well advanced on the Google and Opera side, and progressing rather well for Mozilla and Microsoft. The blocking factor today is rather on Apple's side, which does not yet provide support for Service Workers on Safari, but this can be bypassed by using Chrome on iPhone.
+
+But since the concept of PWA is based on a progressive implementation, without blocking users who do not yet have the necessary technologies for a complete experience, nothing prevents us from offering PWAs for users who can enjoy this experience, and it will remain functional for other users like a classic Web App. So yes, we can use PWAs today. Here are some examples: [pwa.rocks](https://pwa.rocks/)

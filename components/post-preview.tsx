@@ -1,3 +1,4 @@
+import Balancer from 'react-wrap-balancer'
 import Avatar from './avatar'
 import DateFormatter from './date-formatter'
 import CoverImage from './cover-image'
@@ -31,8 +32,10 @@ const PostPreview = ({
           as={`/posts/${slug}`}
           href="/posts/[slug]"
           className="hover:underline"
-        >
-          {title}
+          >
+          <Balancer>
+           {title}
+          </Balancer>
         </Link>
       </h3>
       <div className="text-lg mb-4">

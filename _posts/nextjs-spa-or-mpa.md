@@ -1,0 +1,62 @@
+---
+title: 'NextJS - SPA or MPA?'
+excerpt: 'NextJS is an SPA-inspired, PESPA framework that uses server-side rendering, client-side hydration, and React Server Components to achieve an optimized balance between page load time and bundle size.'
+coverImage: '/assets/blog/dynamic-routing/cover.jpg'
+date: '2023-03-31T21:44:21.322Z'
+author:
+  name: Alexandre Ferreira
+  picture: '/assets/blog/authors/alexandre-ferreira.jpg'
+ogImage:
+  url: '/assets/blog/dynamic-routing/cover.jpg'
+---
+
+# NextJS - SPA or MPA?
+SPAs became popular at the beginning of the 2010s with the emergence of libraries like Backbone, Ember, and AngularJS. With the increasing popularity of powerful devices, we were able to transfer much of the logic that used to run on the server to the client side.
+
+At the time, this was quite a revolution because handling routing on the client-side allowed us to create smooth navigations, avoiding unnecessary page refreshes and providing a better user experience.
+
+Finally, we were able to create complex web applications that ran natively on the browser just with JavaScript and HTML5 without the need for external plugins like Flash. We were no longer limited to building basic websites!
+
+We can't deny that the rise of SPAs and NodeJS was the consecration of JavaScript as a programming language 🎉. Until then, JavaScript developers were considered second-class programmers 😢.
+
+But times have changed. In recent years, JavaScript has been leading the trends of innovation and is now one of the most popular programming languages.
+
+New libraries like React, Vue, and Svelte were released, and everyone was using SPAs. Server-side rendering managed to solve some problems that we had with code executed exclusively on the client, such as time to Largest Contentful Paint (LCP) and poor SEO, by delivering prerendered pages to the client. Frameworks like NextJS, Gatsby, Remix, and Nuxt became very popular.
+
+Why am I talking about this?
+
+Because in recent years, this trend is shifting again, and I get the feeling that SPAs are losing their luster. And what's the reason for it? The infamous bundle size... 📦
+
+## MPAs are back!
+### ...and Astro is breaking all the Lighthouse's scores 💪
+The problem with SPAs, as mentioned before, is the size of the bundle. When we put all the logic to be run on the client-side, we need to deliver a lot of code to the client, and the side effect is that our bundle will grow. We can try to find optimizations and workarounds, such as code splitting and lazy loading, but at the end of the day, we are still sending a lot of code to the client.
+
+All these problems are leading to a new change. MPAs are becoming popular again. Frameworks like Astro were released, and they are saying: "SPAs are bad; you don't need to send too much JavaScript to the client." Well, they are not really saying this. They recognize that while SPAs are great for some applications, they can be too much for editorial or commercial sites that have only a few components requiring user interaction.
+
+Astro's strategy is to render everything on the server, delivering plain HTML to the client and only JavaScript as needed to the components that require interaction. Rendering and routing happens on the server. This way, Astro manages to serve pages that can be painted by the browser and are ready to be interacted with in minimal time. It's no surprise that they are exploding on the Web Core Vitals measured by tools like Lighthouse.
+
+## React Server Components (RSC)
+The React Core Team is sensitive to this trend, and they also realized that when we are doing server-side rendering (SSR), there's no point in sending JavaScript to the client and hydrating components that are not supposed to change anymore. If a component doesn't react to state changes, doesn't respond to any events, and doesn't allow interactions, it can be rendered only once on the server, and no JavaScript related to this component is supposed to be sent and executed on the client.
+
+By doing this, we can execute server-side code inside a React Server Component, like fetching data from a database, and significantly decrease the size of our JavaScript bundles by stripping out the code of many components as well as libraries from our client code.
+
+For example, this blog uses markdown to store its posts. I'm using `remark` and `remark-html` to transform the markdown file into HTML. I only need to do this once, and this can be done on the server. Putting the code of these libraries in the client-side bundle wouldn't be optimal at all.
+
+Next.js 13 adopted the strategy of "Server Side First" in its new `app` directory (I confess, I stole the concept of "Mobile First" 😂). All components are RSC by default. If you want to run the component code on the client, you should mark it as a client component ("use client").
+
+## Conclusion: Is Next.js 13 an MPA or an SPA?
+As we've seen, Next.js 13 now renders most components on the server side only. It doesn't ship the code of many components and libraries to the client, resulting in a much smaller bundle. The routes on a Next application serve pages generated on the server (they can be static or dynamic).
+
+So can we say that Next.js 13 adopted the same strategy as Astro and became an MPA? No, definitely not. Despite rendering its pages on the server and hydrating only client components on the client, Next.js still behaves as an SPA once the page is loaded.
+
+The first render comes from the server, but from there, all routing and navigation happens on the client. The `next-link` component is a client component, so when we navigate using a `next-link`, Next.js will fetch (it can be prefetched) only the data of the requested page (not a SSR page) and perform routing and rendering on the client, like a classic SPA, avoiding a full page reload.
+
+This is why the JavaScript bundle delivered by Next.js is still bigger than those delivered by MPA frameworks like Astro. Astro may perform better on a single page load (what tools like Lighthouse are measuring), but it's quite unlikely that it will beat Next.js once the user starts to navigate the application.
+
+Once a Next.js application is loaded, for each navigation it will fetch just the minimal required data and update the DOM. It won't trigger a new page load, so the browser won't need to parse the new page HTML, load assets like JavaScript and CSS again, etc. There's more work on the first load, but less work after.
+
+On the other hand, we can't say that Next.js is an SPA, like when we create a React application using CRA (create-react-app). A lot of stuff is happening on the server now. I know it can be a little confusing. 😂
+
+Dan Abramov even tweeted [about stopping using the terms SPA and MPA](https://twitter.com/dan_abramov/status/1636943182322704385) a few days ago. Although I can't disagree with him that modern applications use a hybrid model mixing concepts of SPA and MPA, these concepts are still easy to understand and useful to describe the behavior of some applications.
+
+So Next.js is not definitely an MPA, but it can't be considered a pure SPA either. So what it is? Next can be considered a PESPA (Progressively Enhanced Single Page App). To delve deeper into this concept, I highly recommend reading this [amazing post](https://www.epicweb.dev/the-webs-next-transition) by Kent C. Dodds, which covers MPA's, PEMPA's, SPA's, and PESPA's. I refrained from explaining the concepts of MPA and SPA in my post, as all the necessary information and pros and cons of each architecture can be found in Kent's post.
