@@ -32,7 +32,7 @@ export async function generateMetadata({ params }) {
     title: post.title,
     description: post.excerpt,
     openGraph: {
-      images: `http://nakd-code/api/og?title=${post.title}&bgImage=https://www.nakd-code.dev${post.ogImage.url}`,
+      images: `http://code-insights/api/og?title=${post.title}&bgImage=https://www.code-insights.dev${post.ogImage.url}`,
     }
   };
 }
@@ -49,7 +49,7 @@ export default async function Post({ params }: Props) {
   ]) as unknown as PostType;
   const content = await markdownToHtml(post.content || "");
 
-  const title = `${post.title} | NAKD Code`;
+  const title = `${post.title} | Code Insight`;
 
   return (
       <Container>

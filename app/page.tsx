@@ -23,7 +23,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>NAKD Code | Unveiling the secrets of Web Development</title>
+        <title>Code Insight | Unveiling the secrets of Web Development</title>
       </Head>
       <Container>
         <Intro />

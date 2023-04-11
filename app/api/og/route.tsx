@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     searchParams.get("title") ?? "Unveiling the secrets of Web Development";
   const bgImage =
     searchParams.get("bgImage") ??
-    "https://www.nakd-code.dev/assets/blog/dynamic-routing/cover.jpg";
+    "https://www.code-insights.dev/assets/blog/dynamic-routing/cover.jpg";
 
   const username = searchParams.get("username");
   return new ImageResponse(
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
           <div tw="flex flex-col md:flex-row w-full py-12 px-4 md:items-center justify-between p-8">
             <h2 tw="flex flex-col text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 text-left">
               <span tw="text-5xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8">
-                NAKD Code
+                Code Insight
               </span>
               <span tw="text-indigo-600">// {title}</span>
             </h2>

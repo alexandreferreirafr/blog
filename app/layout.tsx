@@ -25,8 +25,8 @@ export default function RootLayout({
 }
 
 export const metadata: Metadata = {
-  title: 'NAKD Code | Unveiling the secrets of Web Development 🎉',
-  description: 'NAKD Code | Unveiling the secrets of Web Development',
+  title: 'Code Insight | Unveiling the secrets of Web Development 🎉',
+  description: 'Code Insight | Unveiling the secrets of Web Development',
   themeColor: '#000',
   openGraph: {
     images: HOME_OG_IMAGE_URL,
