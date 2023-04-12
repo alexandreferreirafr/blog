@@ -1,4 +1,6 @@
 import { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/react';
+
 import Alert from '../components/alert';
 import Footer from '../components/footer';
 import { HOME_OG_IMAGE_URL } from '../lib/constants';
@@ -19,6 +21,7 @@ export default function RootLayout({
           <main>{children}</main>
           </div>
           <Footer />
+          <Analytics />
         </body>
       </html>
     );
