@@ -25,13 +25,13 @@ export async function GET(request: NextRequest) {
           backgroundImage: `url('${bgImage}')`,
         }}
       >
-        <div tw="flex bg-gray-50 bg-opacity-50">
+        <div tw="flex bg-gray-50 bg-opacity-70">
           <div tw="flex flex-col md:flex-row w-full py-12 px-4 md:items-center justify-between p-8">
             <h2 tw="flex flex-col text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 text-left">
               <span tw="text-5xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8">
-                Code Insight
+              {title}
               </span>
-              <span tw="text-indigo-600">// {title}</span>
+              <span>// code-insights.dev</span>
             </h2>
           </div>
         </div>

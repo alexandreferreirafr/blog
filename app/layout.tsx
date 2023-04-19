@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { Analytics } from '@vercel/analytics/react';
 
 import Alert from '../components/alert';
 import Footer from '../components/footer';
@@ -21,15 +20,14 @@ export default function RootLayout({
           <main>{children}</main>
           </div>
           <Footer />
-          <Analytics />
         </body>
       </html>
     );
 }
 
 export const metadata: Metadata = {
-  title: 'Code Insight | Unveiling the secrets of Web Development 🎉',
-  description: 'Code Insight | Unveiling the secrets of Web Development',
+  title: 'Code Insights | Unveiling the secrets of Web Development 🎉',
+  description: 'Code Insights | Unveiling the secrets of Web Development',
   themeColor: '#000',
   openGraph: {
     images: HOME_OG_IMAGE_URL,
