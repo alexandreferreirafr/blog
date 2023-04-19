@@ -1,0 +1,276 @@
+---
+title: 'Creative ways of using useReducer'
+excerpt: ''
+coverImage: '/assets/blog/creative-ways-of-use-reducer/cover.png'
+date: '2023-04-13T00:00:00.000Z'
+author:
+  name: Alexandre Ferreira
+  picture: '/assets/blog/authors/alexandre-ferreira.jpg'
+ogImage:
+  url: '/assets/blog/creative-ways-of-use-reducer/cover.png'
+---
+
+# Creative ways of using useReducer
+
+If you are a React developer, you probably know the hook `useReducer` and how to use it. You call `useReducer` passing a reducer function, an initial value, an optional initializer function, and it will return an array with two values: the current state and the dispatch function. If you don't know it yet, I invite you to check the official [React documentation](https://react.dev/reference/react/useReducer).
+
+However, some developers, especially those coming from Redux, may think that `useReducer` is only used to manage complex state. Although it is the main use case, `useReducer` can be used creatively in some different ways due to functional JavaScript's permissive nature. Let's explore how `useReducer` works:
+
+```jsx
+function useReducer(reducer, intialArg, initializer) {
+    // ...
+    return [state, dispatch]
+}
+```
+
+`useReducer` returns an array with two values: the current `state` and the `dispatch` function. The initial `state` is either the `initialValue` or the return value of the `initializer` function called with `initialValue` as an argument if we provide the third argument. The `dispatch` function is used to update the `state`. When we call it, it will internally invoke the `reducer` function with the current `state` as the first argument and the argument passed to `dispatch` as the second argument (called `action` in the React docs), and its return value will be the next `state`.
+
+Technically, the `reducer` function takes the `state` and `action` as arguments and returns the next state. However, the only requirement for the reducer function is to return the next state. We can use the arguments, but they are not really required.
+
+The same goes for the `dispatch` function. It expects to be invoked with an `action` argument, but we are free to call it with any type of argument or no argument at all. The only thing to remember is that the argument that we pass to it will be passed as the second argument to the `reducer` function.
+
+Let's try it!
+
+## Simple toggle
+
+#### Using useState
+
+With useState, the logic should be placed where the setState is called, in this case, on the `onChange` handler.
+
+```jsx
+function Toggle({ children }) {
+    const checkboxId = useId()
+    const [checked, setChecked] = useState(false)
+
+    return (
+        <>
+            <div>
+                <input
+                    type="checkbox"
+                    id={checkboxId}
+                    name={checkboxId}
+                    checked={checked}
+                    onChange={() => setChecked(s => !s)}
+                />
+                <label for={checkboxId}>Show</label>
+            </div>
+            { checked ? children : null}
+        </>
+    )
+}
+```
+
+#### Using useReducer
+
+The `reducer` function just needs to return the next `state`, which is the opposite of the current `state`, and the `initialValue` is the initial `state` (true or false).
+
+Bingo 🎉, now we don't need to handle the logic on the `onChange` handler anymore.
+
+```jsx
+function Toggle({ children }) {
+    const checkboxId = useId()
+    const [checked, toggle] = useReducer((s) => !s, false)
+
+    return (
+        <>
+            <div>
+                <input
+                    type="checkbox"
+                    id={checkboxId}
+                    name={checkboxId}
+                    checked={checked}
+                    onChange={toggle}
+                />
+                <label for={checkboxId}>Show</label>
+            </div>
+            { checked ? children : null}
+        </>
+    )
+}
+```
+
+## Increment Button
+
+#### Using useState
+
+When using `useState`, the logic for incrementing the `state` should be placed where the `setState` is called, which in this case is the `onClick` handler.
+
+```jsx
+function IncrementButton() {
+    const [value, setValue] = useState(0)
+
+    return (
+        <button onClick={() => setValue(v => v + 1)}>
+            {value}
+        </button>)
+}
+```
+
+#### Using useReducer
+
+When using `useReducer`, the reducer function just needs to return the `nextState` that is the `currentState` plus 1, and the `initialValue` is the `initialState` (a number). 
+
+```jsx
+function IncrementButton() {
+    const [value, increment] = useReducer((v) => v + 1, 0)
+
+    return <button onClick={increment}>{value}</button>
+}
+```
+
+If we want to give the option to set the value to be incremented, we could easily do it using the `action` argument of the `dispatch` function. We can even create a derived function `decrementBy` by invoking the incrementBy with a negative value.
+
+```jsx
+function IncrementButton() {
+    const [value, incrementBy] = useReducer((v, inc) => v + inc, 0)
+
+    const decrementBy = (value) => incrementBy(-value)
+
+    return (
+        <>
+            <button onClick={() => decrementBy(3)}>- 3</button>
+            { value }
+            <button onClick={() => incrementBy(3)}>+ 3</button>
+        </>
+    )
+}
+```
+
+## Enhanced State
+
+Sometimes, we want to apply some restrictions or formatting to the values on the state. Using useState, we need to be sure to apply them before calling setState, which can lead to bugs and regressions. Using useReducer, we have the possibility to add these restrictions or formatting to the reducer function and be sure that they will be applied on each state update.
+
+Let's see how to build a state for the expiry date of a payment card!
+
+#### Using useState
+
+The logic for the expiry date lives inside the `changeHandler` function.
+
+```jsx
+function expiryDateFormatter(date) {
+    return date
+        .replace(/\D/g, '')
+        .slice(0, 4)
+        .replace(/(\d{2})/, '$1/')
+        .replace(/\/$/, '')
+}
+
+function ExpiryDate() {
+    const fieldId = useId()
+    const [expiryDate, setExpirydate] = useState('')
+
+    const changeHandler = (e) => {
+        const { value } = e.target
+        const formattedDate = expiryDateFormatter(value)
+        setExpirydate(formattedDate)
+    }
+
+    return (
+        <label for={fieldId}>
+            <input
+                id={fieldId}
+                name={fieldId}
+                value={expiryDate}
+                onChange={changeHandler}
+            />
+        </label>
+    )
+}
+```
+
+#### Using useReducer
+
+The logic is moved to the `reducer` function.
+
+```jsx
+function expiryDateFormatter(date) {
+    return date
+        .replace(/\D/g, '')
+        .slice(0, 4)
+        .replace(/(\d{2})/, '$1/')
+        .replace(/\/$/, '')
+}
+
+function ExpiryDate() {
+    const fieldId = useId()
+    const [expiryDate, setExpirydate] = useReducer(
+        (_, value) => expiryDateFormatter(value),
+        ''
+    )
+
+    const changeHandler = (e) => {
+        const { value } = e.target
+        setExpirydate(value)
+    }
+
+    return (
+        <label for={fieldId}>
+            <input
+                id={fieldId}
+                name={fieldId}
+                value={expiryDate}
+                onChange={changeHandler}
+            />
+        </label>
+    )
+}
+```
+
+## Safe State
+
+When working with complex `state` objects in React, it's important to ensure that updates are performed in a safe and efficient way. If we only update part of the `state` object and pass it to `setState`, the other properties will be lost, leading to potential errors and inconsistencies.
+
+#### Using useState
+
+One common pattern for updating complex `state` objects with `useState` is to define an `updateState` function that merges the current `state` with the new updates. This function can then be passed to child components as a prop to allow them to safely update the `state`.
+
+```jsx
+function UserForm() {
+    const [user, setUser] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+    })
+
+    const updateUser = (update) => {
+        setUser(currentUser => ({
+            ...currentUser,
+            ...update,
+        }))
+    }
+
+    return (
+        <>
+            ...
+        </>
+    )
+}
+```
+
+#### Using useReducer
+
+When using `useReducer`, the update logic is contained within the `reducer` function, which takes the current `state` and the `action` as arguments and returns the updated `state`. This allows us to easily perform safe updates to complex `state` objects without losing any information.
+
+```jsx
+function UserForm() {
+    const [user, updateUser] = useReducer(
+      (currentState, update) => ({...currentState, ...update}), 
+      {
+          firstName: '',
+          lastName: '',
+          email: '',
+      }
+  )
+
+    return (
+        <>
+            ...
+        </>
+    )
+}
+```
+
+
+## Conclusion
+
+In summary, `useReducer` is a powerful tool for managing complex `state` in React applications. It allows us to easily perform safe updates to `state` objects without losing any information, and can be used in a variety of creative ways. By using `useReducer`, we can gain greater control over our `state` management and write more efficient and maintainable code.
