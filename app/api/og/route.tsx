@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     searchParams.get("title") ?? "Unveiling the secrets of Web Development";
   const bgImage =
     searchParams.get("bgImage") ??
-    "https://www.code-insights.dev/assets/blog/dynamic-routing/cover.jpg";
+    "http://www.code-insights.dev/assets/blog/creative-ways-of-use-reducer/cover.png"; 
 
   const username = searchParams.get("username");
   return new ImageResponse(

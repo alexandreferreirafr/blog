@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
     title: post.title,
     description: post.excerpt,
     openGraph: {
-      images: `http://code-insights.dev/api/og?title=${post.title}&bgImage=https://www.code-insights.dev${post.ogImage.url}`,
+      images: encodeURI(`http://code-insights.dev/api/og?title=${post.title}&bgImage=http://www.code-insights.dev${post.ogImage.url}`),
     }
   };
 }
