@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown"
+import Image from "next/image"
 import Code from "../../../components/code";
 import { getPostBySlug, getAllPosts } from "../../../lib/api";
 import type PostType from "../../../interfaces/post";
@@ -83,6 +84,18 @@ export default async function Post({ params }: Props) {
                   h6: ({node, ...props}) => <Heading6 {...props} />,
                   p: ({node, ...props}) => <Text {...props} />,
                   a: ({node, href, ...props}) => <MDXLink {...props} href={href!} className="text-indigo-600" />,
+                  img: ({node, src, ...props}) => {
+                    if (!props.alt) return <img src={src} {...props} />
+
+                    const [altText, dimensions] = props.alt?.split('{{');
+                    const alt = altText.trim();
+
+                    if (!dimensions) return <img src={src} alt={alt} {...props} />
+
+                    const width = dimensions.match(/(?<=w:\s?)\d+/g)?.[0] ?? 800;
+                    const height = dimensions.match(/(?<=h:\s?)\d+/g)?.[0] ?? 400;
+                    return <Image src={src!} alt={alt} width={+width} height={+height} />
+                  },
                   code: ({node, inline, className, children, ...props}) => {
                     const match = /language-(\w+)/.exec(className || '')
                     return !inline && match ? (
