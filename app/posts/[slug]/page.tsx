@@ -1,7 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown"
 import Code from "../../../components/code";
-import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { getPostBySlug, getAllPosts } from "../../../lib/api";
 import type PostType from "../../../interfaces/post";
 import Container from "../../../components/container";
@@ -16,9 +15,6 @@ import {
   Heading6,
 } from '../../../components/mdx/Heading'
 import { Text, MDXLink, CodeInline } from '../../../components/mdx/Text'
-
-
-
 
 type Params = {
   slug: string;
@@ -70,7 +66,7 @@ export default async function Post({ params }: Props) {
         <>
           <article className="mb-32">
             <PostHeader
-              title={post.title}
+              title={title}
               coverImage={post.coverImage}
               date={post.date}
               author={post.author}
@@ -90,7 +86,7 @@ export default async function Post({ params }: Props) {
                   code: ({node, inline, className, children, ...props}) => {
                     const match = /language-(\w+)/.exec(className || '')
                     return !inline && match ? (
-                      <Code style={atomDark} language={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} {...props} />
+                      <Code lang={match[1]} PreTag="div" children={String(children).replace(/\n$/, '')} />
                     ) : (
                       <CodeInline className={className} {...props} >{children}</CodeInline>
                     )
