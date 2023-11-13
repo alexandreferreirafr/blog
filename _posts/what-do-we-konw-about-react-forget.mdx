@@ -1,0 +1,131 @@
+---
+title: 'What do we know about React Forget'
+excerpt: 'React Forget is the React Core Team cutting-edge compiler, automatically memoizing Components and Hooks for enhanced performance. Developed at Meta, it is currently optimizing client components, with promising early results, promising a faster user experience'
+coverImage: '/assets/blog/what-do-we-know-about-react-forget/cover.png'
+date: '2023-11-08T00:00:00.000Z'
+author:
+  name: Alexandre Ferreira
+  picture: '/assets/blog/authors/alexandre-ferreira.jpg'
+ogImage:
+  url: '/assets/blog/what-do-we-know-about-react-forget/cover.png'
+---
+
+# What do we know about React Forget
+
+
+
+For those unfamiliar, the React Core Team has been cooking up something exciting called React Forget. Insights from recent events, such as [React Advanced London 2023](https://portal.gitnation.org/contents/understanding-idiomatic-react) and [React India 2023](https://www.youtube.com/watch?v=kjOacmVsLSE), were shared by active members of the React Core Team—Joe Savona, Mofei Zhang, and Sathya Gunasekaran. These talks shed light on the challenges, tricks, insights and future roadmap of React Forget.
+
+Sathya, at React India, delved into the challenges of creating a compiler, showcased some tricky cases, and explained why the React model is perfect for compiler implementation. Meanwhile, at React Advanced London, Joe Savona and Mofei Zhang demonstrated how the compiler optimizes code on a Playground. They also discussed a use case involving the compiler at Facebook and insights into React Forget.
+
+## What is React Forget?
+
+In essence, React Forget is a compiler designed to analyze your React code and automatically memoize your Components and Hooks. The goal? To eliminate unnecessary rerenders and boost performance.
+
+## Why React Forget?
+
+React operates on a unidirectional data flow. When a component rerenders, by default, all the components returned by that component will rerender as well. While this default behavior is usually fast, in some cases, especially with numerous components or a slow-to-render component, performance can suffer.
+
+React provides APIs like `React.memo`, `useMemo`, and `useCallback` to memoize components and props, preventing unnecessary rerenders. However, their usage is a hot topic, with debates about memoizing everything versus avoiding memoization altogether. Striking a balance between performance improvements and code readability is the key to manual memoization.
+
+While performance matters, React developers should focus on the UI rather than memoization. Pre-optimizing React code wrapping everything on `React.memo`, `useMemo`, and `useCallback` can boost performance but harm developer experience (DX), making the code hard to read and maintain.
+
+Let the compiler analyze your code and implement optimizations during the build phase, allowing developers to concentrate on the UI and write cleaner code. React Forget simplifies React development and optimizes apps by default.
+
+## Who is Behind React Forget?
+
+The project is currently in development at Meta, and not yet open-sourced.
+
+## When Can We Expect React Forget?
+
+Unfortunately, React Forget is not yet production-ready and available to the public. As Mofei Zhang explained, Meta maintains high standards before releasing a product into production. Nevertheless, React Forget is already being used and tested at Meta in real apps like the Quest Store product details page and Instagram profile page for the web.
+
+After further testing and analysis, React Forget will be deployed on other Meta products and, once it passes all tests, released to the public and open-sourced.
+
+Curious about a Meta App using React Forget? Inspect the code and look for the unstable_useMemoCache hook. If it's there, the compiler worked its magic! 😁
+
+
+## Where Does React Forget Operate?
+
+Given that the compiler's goal is to avoid unnecessary rerenders, React Forget currently optimizes code on client components when they are running on the client. Future versions might extend optimizations to server-side rendering (SSR).
+
+Compilation occurs during the build phase, and the optimized code is outputted in the bundle. To be crystal clear, React Forget won't execute during runtime.
+
+## How
+Thanks to the principles of immutability, purity, and React's component-driven design, the compiler's job is streamlined. It doesn't need to analyze your entire codebase; optimizations happen at the component level and can be parallelized.
+
+In React, the UI is a function of the state. For a given state, a React component should always return the same UI. So, if the props and state didn't change, the component doesn't need to rerender.
+
+React Forget memoizes all components and hooks. It's as if the compiler is wrapping all components in `React.memo`, functions in `useCallback`, and non-primitive values in `useMemo`. In reality, the compiler isn't using these React APIs; it's employing low-level optimizations that function similarly, but even more efficiently.
+
+Compilers excel at optimization, often surpassing handcrafted code. As shown by the React Core team, imagine a component like this:
+
+```tsx
+function VideoTab({ videos, title }) {
+    const filteredVideos = videos.filter(someFilterFunction);
+
+    return (
+        <>
+            <Heading title={title} />
+            <VideoList videos={filteredVideos} />
+        </>
+    )
+}
+```
+
+The problem here is that every time the title changes, both `<Heading />` and `<VideoList />` will rerender. While `<Heading />` should rerender because it depends on `title`, `<VideoList />` doesn't—it depends only on `filteredVideos`.
+
+```tsx
+const VideoListMemoized = React.memo(VideoList);
+
+function VideoTab({ videos, title }) {
+    const filteredVideos = videos.filter(someFilterFunction);
+
+    return (
+        <>
+            <Heading title={title} />
+            <VideoListMemoized videos={filteredVideos} />
+        </>
+    )
+}
+```
+
+One might think, "Let's wrap `<VideoList />` in `React.memo`" but that doesn't solve the issue because `React.memo` compares props using `Object.is()`, and in JavaScript, `[] !== []` (non-primitives are compared by reference, not value), so `filteredVideos` will always be different.
+
+To make this work, we need to wrap `filteredVideos` in a `useMemo`.
+
+```tsx
+const VideoListMemoized = React.memo(VideoList);
+
+function VideoTab({ videos, title }) {
+    const filteredVideos = useMemo(() => videos.filter(someFilterFunction), [videos]);
+
+    return (
+        <>
+            <Heading title={title} />
+            <VideoListMemoized videos={filteredVideos} />
+        </>
+    )
+}
+```
+
+As mentioned, the compiler doesn't use these APIs and would produce code like this:
+
+![Compiled code image {{ w: 672, h: 369 }}](/assets/blog/what-do-we-know-about-react-forget/playground-1.png)
+
+![Compiled code image {{ w: 672, h: 501 }}](/assets/blog/what-do-we-know-about-react-forget/playground-2.png)
+
+
+## First tests
+
+The initial tests are bringing good news. Even though the Quest Store product details page was manually optimized by Meta engineers, the compiler outperformed human optimization.
+
+As demonstrated by Mofei Zhang, the compiler did a better job than Meta engineers at avoiding rerenders on the Quest Store product details page. The compiled version skipped the rerender of all components marked with the red rectangle, resulting in a page load improvement of 4-12% and a tab change 150% faster.
+
+Original code:
+![Original code profile {{ w: 672, h: 391 }}](/assets/blog/what-do-we-know-about-react-forget/original.png)
+
+Compiled version:
+![Original code profile {{ w: 672, h: 389 }}](/assets/blog/what-do-we-know-about-react-forget/compiled.png)
+
+
